@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 # Internals
-from api.models import CodeExplainer, Assistant
-from api.utils import send_code_to_api, create_new_assistant
+from api.models import CodeExplainer, Assistant, Chat
+from api.utils import send_code_to_api, create_new_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
@@ -26,6 +26,28 @@ class AssistantSerializer(serializers.ModelSerializer):
         data = create_new_assistant(validated_data["name"], validated_data["description"])
         new_assistant.save()
         return new_assistant
+    
+    
+class ChatSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Chat
+        fields = (
+            "id",
+        "_input",
+        "_output"
+        )
+        extra_kwargs = {
+            "_output":{"read_only":True}
+        }
+
+    def create(self, validated_data):
+        chat = Chat(**validated_data)
+        _output = send_message_to_assistant(validated_data["_input"])
+        chat._output = _output
+        chat.save()
+        return chat
+    
     
 
 class CodeExplainSerializer(serializers.ModelSerializer):

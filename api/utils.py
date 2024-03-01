@@ -1,5 +1,6 @@
 from openai import OpenAI
 from django.conf import settings
+import time
 # openai.api_key = settings.APIKEY
 client = OpenAI(
     # This is the default and can be omitted
@@ -15,6 +16,59 @@ def create_new_assistant(name, description):
     )
     
     return assistant
+
+def wait_on_run(run, thread):
+    while run.status == "queued" or run.status == "in_progress":
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread.id,
+            run_id=run.id,
+        )
+        time.sleep(2.5)
+
+    if run.status == "failed":
+        print(run.failed_at)
+    return run
+
+def send_message_to_assistant(msg):
+    
+    # Retrieve the list of existing assistants
+    existing_assistants = client.beta.assistants.list()
+
+    # Check if the desired assistant exists in the list
+    desired_assistant_name = "Johan"
+    assistant = None
+    for existing_assistant in existing_assistants.data:
+      if existing_assistant.name == desired_assistant_name:
+          assistant = existing_assistant
+          break
+      
+    # Retrieve assistant
+    assistant = client.beta.assistants.retrieve(assistant.id)
+    
+    thread = client.beta.threads.create()
+
+    message = client.beta.threads.messages.create(
+        thread_id=thread.id,
+        role="user",
+        content=msg)
+
+    run = client.beta.threads.runs.create(
+        thread_id=thread.id,
+        assistant_id=assistant.id,
+        instructions="Keep your answers as short as possible."
+    )
+
+    wait_on_run(run, thread)
+
+    messages = client.beta.threads.messages.list(
+        thread_id=thread.id
+    )
+
+    for message in messages.data:
+        role = message.role
+        content = message.content[0].text.value
+        
+        return content
 
 def send_code_to_api(code):
     try:

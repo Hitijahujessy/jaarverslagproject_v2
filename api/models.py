@@ -15,6 +15,14 @@ class Assistant(models.Model):
         self.query_count += 1
         self.save()
     
+    
+class Chat(models.Model):
+    _input = models.TextField()
+    _output = models.TextField()
+    
+    class Meta:
+        db_table = "t_chat"
+    
 
 class CodeExplainer(models.Model):
     _input = models.TextField()
