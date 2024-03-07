@@ -30,3 +30,11 @@ class CodeExplainer(models.Model):
     
     class Meta:
         db_table = "t_code_explainer"
+
+class UploadedFile(models.Model):
+    file = models.FileField()
+    uploaded_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.uploaded_on.date()
+    

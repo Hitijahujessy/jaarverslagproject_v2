@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 # Internals
-from api.models import CodeExplainer, Assistant, Chat
+from api.models import CodeExplainer, Assistant, Chat, UploadedFile
 from api.utils import send_code_to_api, create_new_assistant, send_message_to_assistant
 
 
@@ -112,3 +112,8 @@ class TokenSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code="authentication")
         attrs["user"] = user
         return attrs
+
+class FileUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UploadedFile
+        fields = ('file', 'uploaded_on')
