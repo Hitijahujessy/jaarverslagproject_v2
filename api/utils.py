@@ -1,12 +1,13 @@
 from openai import OpenAI
 from django.conf import settings
 import time
-# openai.api_key = settings.APIKEY
+
+# Set up OpenAI with API key
 client = OpenAI(
-    # This is the default and can be omitted
     api_key=settings.APIKEY,
 )
 
+# Create an assistant using user-given name and description (retrieved from AssistantModel)
 def create_new_assistant(name, description):
     assistant = client.beta.assistants.create(
         name=name,
@@ -17,6 +18,7 @@ def create_new_assistant(name, description):
     
     return assistant
 
+# Wait for the connection with the OpenAI API is established before trying to start a conversation
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
         run = client.beta.threads.runs.retrieve(
@@ -29,13 +31,15 @@ def wait_on_run(run, thread):
         print(run.failed_at)
     return run
 
+
+# Send/retrieve messages to/from assistant
 def send_message_to_assistant(msg):
-    
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
-    desired_assistant_name = "Johan"
+    desired_assistant_name = "Johnny Test"  # Placeholder, could be something like "desired_assistant.name", 
+                                      # "desired_assistant" being an instance of AssistantModel
     assistant = None
     for existing_assistant in existing_assistants.data:
       if existing_assistant.name == desired_assistant_name:
@@ -45,25 +49,32 @@ def send_message_to_assistant(msg):
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
     
+    # Create a thread (conversation)
     thread = client.beta.threads.create()
 
+    # Define the user's message
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content=msg)
 
+    # Send the message and pre-given instructions to assistant 
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id,
-        instructions="Keep your answers as short as possible."
+        instructions="Be polite and try asking for follow-up questions whenever it makes sense to do so."
     )
 
+    # Wait for connection with the OpenAI API
     wait_on_run(run, thread)
 
+
+    # Retrieve the conversation messages
     messages = client.beta.threads.messages.list(
         thread_id=thread.id
     )
 
+    # Retrieve and return the response message
     for message in messages.data:
         role = message.role
         content = message.content[0].text.value
