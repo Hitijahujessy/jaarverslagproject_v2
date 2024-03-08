@@ -81,7 +81,7 @@ class TokenView(ObtainAuthToken):
     serializer_class = TokenSerializer
 
 class FileUploadAPIView(APIView):
-    authentication_classes = [NoAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny]
     parser_classes = (MultiPartParser, FormParser)
     serializer_class = FileUploadSerializer
@@ -89,7 +89,7 @@ class FileUploadAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(User=request.user) # Provide the user information
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED

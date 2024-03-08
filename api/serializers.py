@@ -116,4 +116,4 @@ class TokenSerializer(serializers.Serializer):
 class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = UploadedFile
-        fields = ('file', 'uploaded_on')
+        fields = '__all__'
