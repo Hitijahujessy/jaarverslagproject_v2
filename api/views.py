@@ -15,6 +15,30 @@ class NoAuthentication(BaseAuthentication):
     def authenticate(self, request):
         return None
 
+class AssistantDetailAPIView(views.APIView):
+    serializer_class = AssistantSerializer
+    authentication_classes = [TokenAuthentication]
+    
+    def get_object(self, pk):
+        try:
+            return Assistant.objects.get(pk=pk)
+        except Assistant.DoesNotExist:
+            raise status.HTTP_404_NOT_FOUND
+    
+    def get(self, request, pk, format=None):
+        assistant = self.get_object(pk)
+        serializer = self.serializer_class(assistant)  # Removed many=True because it's a single object
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        assistant = self.get_object(pk)  # Use get_object which handles DoesNotExist
+        serializer = self.serializer_class(assistant, data=request.data)  # Pass instance for update
+        if serializer.is_valid():
+            serializer.save()  # Internally calls update or create
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class AssistantView(views.APIView):
     serializer_class = AssistantSerializer
     authentication_classes = [TokenAuthentication]
@@ -30,6 +54,7 @@ class AssistantView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ChatView(views.APIView):
     serializer_class = ChatSerializer

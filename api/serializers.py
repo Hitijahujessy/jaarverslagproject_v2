@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 # Internals
 from api.models import CodeExplainer, Assistant, Chat, UploadedFile
-from api.utils import send_code_to_api, create_new_assistant, send_message_to_assistant
+from api.utils import send_code_to_api, create_new_assistant, modify_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
@@ -26,6 +26,22 @@ class AssistantSerializer(serializers.ModelSerializer):
         data = create_new_assistant(validated_data["name"], validated_data["description"])
         new_assistant.save()
         return new_assistant
+    
+    def update(self, instance, validated_data):
+        # Update the instance with validated_data
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.instructions = validated_data.get('instructions', instance.instructions)
+        
+        # Now, you can call your modify_assistant function if needed
+        # Assuming modify_assistant updates some external system and doesn't return anything
+        modify_assistant(instance.name, instance.description)
+
+        # Don't forget to save the instance after modifying it
+        instance.save()
+        
+        # Return the updated instance
+        return instance
     
     
 class ChatSerializer(serializers.ModelSerializer):

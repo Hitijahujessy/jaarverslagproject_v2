@@ -9,11 +9,38 @@ client = OpenAI(
 
 # Create an assistant using user-given name and description (retrieved from AssistantModel)
 def create_new_assistant(name, description):
+    print("wompwomp")
     assistant = client.beta.assistants.create(
         name=name,
         description=description,
         model= "gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}]
+    )
+    
+    return assistant
+
+# Modify an assistant using user-given name and description (retrieved from AssistantModel)
+def modify_assistant(name, description):
+    print("miepmiep")
+    # Retrieve the list of existing assistants
+    existing_assistants = client.beta.assistants.list()
+
+    # Check if the desired assistant exists in the list
+    desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
+                                      # "desired_assistant" being an instance of AssistantModel
+    assistant = None
+    for existing_assistant in existing_assistants.data:
+      if existing_assistant.name == desired_assistant_name:
+          assistant = existing_assistant
+          break
+      
+    # Retrieve assistant
+    assistant = client.beta.assistants.retrieve(assistant.id)
+    
+    assistant = client.beta.assistants.update(
+        assistant.id,
+        name=name,
+        description=description,
     )
     
     return assistant
