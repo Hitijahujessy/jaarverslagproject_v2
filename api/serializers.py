@@ -2,9 +2,11 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from src.settings import MEDIA_ROOT
 # Internals
 from api.models import CodeExplainer, Assistant, Chat, UploadedFile
 from api.utils import send_code_to_api, create_new_assistant, send_message_to_assistant
+
 
 
 class AssistantSerializer(serializers.ModelSerializer):
@@ -43,7 +45,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         chat = Chat(**validated_data)
-        _output = send_message_to_assistant(validated_data["_input"])
+        _output = send_message_to_assistant(validated_data["_input"],file_location=MEDIA_ROOT)
         chat._output = _output
         chat.save()
         return chat

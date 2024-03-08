@@ -1,6 +1,7 @@
 from openai import OpenAI
 from django.conf import settings
 import time
+import os
 # openai.api_key = settings.APIKEY
 client = OpenAI(
     # This is the default and can be omitted
@@ -23,14 +24,19 @@ def wait_on_run(run, thread):
             thread_id=thread.id,
             run_id=run.id,
         )
-        time.sleep(2.5)
+        time.sleep(3.5)
 
     if run.status == "failed":
         print(run.failed_at)
     return run
 
-def send_message_to_assistant(msg):
-    
+def send_message_to_assistant(msg,file_location):
+    path = retrieve_file_from_folder(file_location)
+    file = client.files.create(
+        file=path,
+        purpose='assistants',
+    )
+
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
@@ -50,7 +56,8 @@ def send_message_to_assistant(msg):
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
-        content=msg)
+        content=msg,
+        file_ids=[file.id])
 
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
@@ -87,3 +94,16 @@ def send_code_to_api(code):
     except OpenAI.error.RateLimitError as e:
         raise ValueError(f"OpenAI API request exceeded rate limit: {e}")
     
+def retrieve_file_from_folder(file_location):
+    files = os.listdir(file_location)
+    if files:
+        first_file = files[0]
+        path = os.path.join(file_location, first_file)
+
+        with open(path, 'rb') as file:
+            contents = file.read()
+
+            return(contents)
+
+
+
