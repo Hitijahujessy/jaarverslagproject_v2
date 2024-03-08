@@ -25,7 +25,7 @@ def wait_on_run(run, thread):
             thread_id=thread.id,
             run_id=run.id,
         )
-        time.sleep(2.5)
+        time.sleep(.5)
 
     if run.status == "failed":
         print(run.failed_at)
@@ -56,13 +56,13 @@ def send_message_to_assistant(msg):
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
-        content=f"{assistant.description}. {msg}")
+        content=f"{assistant.description}. {msg}. {assistant.instructions}")
 
     # Send the message and pre-given instructions to assistant 
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id,
-        instructions="Be polite and try asking for follow-up questions whenever it makes sense to do so."
+        instructions=assistant.instructions
     )
 
     # Wait for connection with the OpenAI API
