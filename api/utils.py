@@ -38,7 +38,7 @@ def send_message_to_assistant(msg):
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
-    desired_assistant_name = "Johnny Test"  # Placeholder, could be something like "desired_assistant.name", 
+    desired_assistant_name = "Pieter"  # Placeholder, could be something like "desired_assistant.name", 
                                       # "desired_assistant" being an instance of AssistantModel
     assistant = None
     for existing_assistant in existing_assistants.data:
