@@ -1,7 +1,6 @@
 from django.urls import path
 # Internals
-from api.views import UserView, TokenView, CodeExplainView, AssistantView, ChatView
-
+from api.views import UserView, TokenView, CodeExplainView, AssistantView, ChatView, FileUploadAPIView
 
 
 urlpatterns = [
@@ -10,5 +9,6 @@ urlpatterns = [
     path('assistants/', AssistantView.as_view(), name="assistants"),
     path('chat/', ChatView.as_view(), name="chat"),
     path('code-explain/', CodeExplainView.as_view(), name="code-explain"),
+    path('upload-file/', FileUploadAPIView.as_view(), name='upload-file'),
 ]
 
