@@ -9,7 +9,6 @@ client = OpenAI(
 
 # Create an assistant using user-given name and description (retrieved from AssistantModel)
 def create_new_assistant(name, description):
-    print("wompwomp")
     assistant = client.beta.assistants.create(
         name=name,
         description=description,
@@ -21,7 +20,6 @@ def create_new_assistant(name, description):
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
 def modify_assistant(name, description):
-    print("miepmiep")
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
