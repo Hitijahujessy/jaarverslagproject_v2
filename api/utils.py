@@ -8,10 +8,10 @@ client = OpenAI(
 )
 
 # Create an assistant using user-given name and description (retrieved from AssistantModel)
-def create_new_assistant(name, description):
+def create_new_assistant(name, company, instructions):
     assistant = client.beta.assistants.create(
         name=name,
-        description=description,
+        instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
         model= "gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}]
     )
@@ -19,7 +19,7 @@ def create_new_assistant(name, description):
     return assistant
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
-def modify_assistant(name, description):
+def modify_assistant(name, company, instructions):
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
@@ -38,7 +38,7 @@ def modify_assistant(name, description):
     assistant = client.beta.assistants.update(
         assistant.id,
         name=name,
-        description=description,
+        instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
     )
     
     return assistant
@@ -58,13 +58,14 @@ def wait_on_run(run, thread):
 
 
 # Send/retrieve messages to/from assistant
-def send_message_to_assistant(msg):
+def send_message_to_assistant(name, msg):
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
-    desired_assistant_name = "Pieter"  # Placeholder, could be something like "desired_assistant.name", 
-                                      # "desired_assistant" being an instance of AssistantModel
+    desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
+                                      # "desired_assistant" being an instance of AssistantModel.
+                                      # Should also check credentials before allowing a connection with an Assistant
     assistant = None
     for existing_assistant in existing_assistants.data:
       if existing_assistant.name == desired_assistant_name:
@@ -81,7 +82,7 @@ def send_message_to_assistant(msg):
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
-        content=f"{assistant.description}. {msg}. {assistant.instructions}")
+        content=f"{assistant.instructions}. {msg}.")
 
     # Send the message and pre-given instructions to assistant 
     run = client.beta.threads.runs.create(

@@ -8,34 +8,35 @@ from api.utils import send_code_to_api, create_new_assistant, modify_assistant, 
 
 
 class AssistantSerializer(serializers.ModelSerializer):
+    company_name = serializers.CharField(required=True)
     
     class Meta:
         model = Assistant
         fields = (
             "id",
-        "name",
-        "description",
-        "instructions",
-        "created_at",
-        "updated_at",
-        "query_count"
+            "name",
+            "company_name",
+            "instructions",
+            "created_at",
+            "updated_at",
+            "query_count"
         )
         
     def create(self, validated_data):
         new_assistant = Assistant(**validated_data)
-        data = create_new_assistant(validated_data["name"], validated_data["description"])
+        data = create_new_assistant(validated_data["name"], validated_data["company_name"], validated_data["instructions"])
         new_assistant.save()
         return new_assistant
     
     def update(self, instance, validated_data):
         # Update the instance with validated_data
         instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
+        instance.company_name = validated_data.get('company_name', instance.company_name)
         instance.instructions = validated_data.get('instructions', instance.instructions)
         
         # Now, you can call your modify_assistant function if needed
         # Assuming modify_assistant updates some external system and doesn't return anything
-        modify_assistant(instance.name, instance.description)
+        modify_assistant(instance.name, instance.company_name, instance.instructions)
 
         # Don't forget to save the instance after modifying it
         instance.save()
@@ -45,24 +46,33 @@ class AssistantSerializer(serializers.ModelSerializer):
     
     
 class ChatSerializer(serializers.ModelSerializer):
+    assistant_name = serializers.SlugRelatedField(slug_field='name', queryset=Assistant.objects.all(), source='assistant')
 
     class Meta:
         model = Chat
         fields = (
             "id",
-        "_input",
-        "_output"
+            "assistant_name",
+            "_input",
+            "_output"
         )
         extra_kwargs = {
-            "_output":{"read_only":True}
+            "_output": {"read_only": True}
         }
-
+        
     def create(self, validated_data):
-        chat = Chat(**validated_data)
-        _output = send_message_to_assistant(validated_data["_input"])
-        chat._output = _output
+        assistant = validated_data['assistant']  # Extract the assistant instance
+        _output = send_message_to_assistant(assistant.name, validated_data["_input"])
+        chat = Chat(**validated_data, _output=_output)
         chat.save()
         return chat
+
+    # def create(self, validated_data):
+    #     chat = Chat(**validated_data)
+    #     _output = send_message_to_assistant(validated_data["_name"], validated_data["_input"])
+    #     chat._output = _output
+    #     chat.save()
+    #     return chat
     
     
 

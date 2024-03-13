@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class Assistant(models.Model):
     name = models.CharField(max_length=120)
-    description = models.TextField()
+    company_name = models.CharField(max_length=120, default="Blauwe Ogen")
     instructions = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -18,6 +18,7 @@ class Assistant(models.Model):
     
     
 class Chat(models.Model):
+    assistant = models.ForeignKey(Assistant, on_delete=models.CASCADE, null=True)
     _input = models.TextField()
     _output = models.TextField()
     
