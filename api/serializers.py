@@ -19,12 +19,17 @@ class AssistantSerializer(serializers.ModelSerializer):
             "instructions",
             "created_at",
             "updated_at",
-            "query_count"
+            "query_count",
+            "files"
         )
         
     def create(self, validated_data):
         new_assistant = Assistant(**validated_data)
-        data = create_new_assistant(validated_data["name"], validated_data["company_name"], validated_data["instructions"])
+        data = create_new_assistant(
+            validated_data["name"], 
+            validated_data["company_name"], 
+            validated_data["instructions"], 
+            validated_data["files"])
         new_assistant.save()
         return new_assistant
     
@@ -66,14 +71,6 @@ class ChatSerializer(serializers.ModelSerializer):
         chat = Chat(**validated_data, _output=_output)
         chat.save()
         return chat
-
-    # def create(self, validated_data):
-    #     chat = Chat(**validated_data)
-    #     _output = send_message_to_assistant(validated_data["_name"], validated_data["_input"])
-    #     chat._output = _output
-    #     chat.save()
-    #     return chat
-    
     
 
 class CodeExplainSerializer(serializers.ModelSerializer):

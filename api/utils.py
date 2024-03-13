@@ -8,12 +8,21 @@ client = OpenAI(
 )
 
 # Create an assistant using user-given name and description (retrieved from AssistantModel)
-def create_new_assistant(name, company, instructions):
+def create_new_assistant(name, company, instructions, uploaded_file):
+    # Read the content of the uploaded file into bytes
+    file_content = uploaded_file.read()
+    
+    file = client.files.create(
+      file=file_content,  # Pass the file content as bytes
+      purpose='assistants'
+    )
+    
     assistant = client.beta.assistants.create(
         name=name,
         instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
         model= "gpt-3.5-turbo-0125",
-        tools=[{"type": "retrieval"}]
+        tools=[{"type": "retrieval"}],
+        file_ids=[file.id]
     )
     
     return assistant

@@ -8,6 +8,7 @@ class Assistant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     query_count = models.PositiveIntegerField(default=0)
+    files = models.FileField(upload_to='assistant_files/', null=True, blank=True)
     
     def __str__(self):
         return self.name
