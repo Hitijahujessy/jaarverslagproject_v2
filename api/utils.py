@@ -28,7 +28,16 @@ def create_new_assistant(name, company, instructions, uploaded_file):
     return assistant
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
-def modify_assistant(name, company, instructions):
+def modify_assistant(name, new_name, company, instructions, uploaded_file):
+    print(new_name)
+    if uploaded_file:
+        file_content = uploaded_file.read()
+        
+        file = client.files.create(
+        file=file_content,  # Pass the file content as bytes
+        purpose='assistants'
+        )
+    
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
@@ -46,8 +55,9 @@ def modify_assistant(name, company, instructions):
     
     assistant = client.beta.assistants.update(
         assistant.id,
-        name=name,
+        name=new_name,
         instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
+        file_ids=[file.id] if uploaded_file else None
     )
     
     return assistant
