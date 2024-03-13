@@ -38,7 +38,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         
         # Update the instance with validated_data
         instance.name = validated_data.get('name', instance.name)
-        new_name = validated_data.get('new_name')
+        # new_name = validated_data.get('new_name')
         instance.company_name = validated_data.get('company_name', instance.company_name)
         instance.instructions = validated_data.get('instructions', instance.instructions)
         instance.files = validated_data.get('files', instance.files)
@@ -47,7 +47,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         # Assuming modify_assistant updates some external system and doesn't return anything
         modify_assistant(
             instance.name, 
-            new_name,
+            # new_name,
             instance.company_name, 
             instance.instructions,
             instance.files)
