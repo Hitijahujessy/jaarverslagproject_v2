@@ -7,57 +7,77 @@ client = OpenAI(
     api_key=settings.APIKEY,
 )
 
-# Create an assistant using user-given name and description (retrieved from AssistantModel)
-def create_new_assistant(name, company, instructions, uploaded_file):
-    # Read the content of the uploaded file into bytes
-    file_content = uploaded_file.read()
+# Create an assistant using user-given name and instructions (retrieved from AssistantModel)
+def create_new_assistant(name, company, instructions, uploaded_file=None):
+    # Initialize file_ids as an empty list
+    file_ids = []
     
-    file = client.files.create(
-      file=file_content,  # Pass the file content as bytes
-      purpose='assistants'
-    )
+    # Only proceed with file handling if uploaded_file is not None
+    if uploaded_file is not None:
+        # Read the content of the uploaded file into bytes
+        file_content = uploaded_file.read()
+        
+        # Create the file with OpenAI's API
+        file = client.files.create(
+            file=file_content,  # Pass the file content as bytes
+            purpose='assistants'
+        )
+        
+        # Add the created file's ID to the file_ids list
+        file_ids.append(file.id)
     
+    # Create the assistant with conditional file_ids
     assistant = client.beta.assistants.create(
         name=name,
         instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
-        model= "gpt-3.5-turbo-0125",
+        model="gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}],
-        file_ids=[file.id]
+        file_ids=file_ids  # Use the possibly empty file_ids list
     )
     
     return assistant
 
-# Modify an assistant using user-given name and description (retrieved from AssistantModel)
-def modify_assistant(name, new_name, company, instructions, uploaded_file):
+# Modify an assistant using user-given name and instructions (retrieved from AssistantModel)
+def modify_assistant(name, new_name, company, instructions, uploaded_file=None):
     print(new_name)
-    if uploaded_file:
+    # Initialize file_ids as an empty list
+    file_ids = []
+    
+    # Proceed with file handling if uploaded_file is not None and a file is associated
+    if uploaded_file and uploaded_file.name:  # Check if there's an uploaded file associated
         file_content = uploaded_file.read()
         
+        # Create the file with OpenAI's API
         file = client.files.create(
-        file=file_content,  # Pass the file content as bytes
-        purpose='assistants'
+            file=file_content,  # Pass the file content as bytes
+            purpose='assistants'
         )
-    
+        
+        # Add the created file's ID to the file_ids list
+        file_ids.append(file.id)
+
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
-    desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
-                                      # "desired_assistant" being an instance of AssistantModel
+    desired_assistant_name = name
     assistant = None
     for existing_assistant in existing_assistants.data:
-      if existing_assistant.name == desired_assistant_name:
-          assistant = existing_assistant
-          break
+        if existing_assistant.name == desired_assistant_name:
+            assistant = existing_assistant
+            break
       
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
     
+    updated_name = new_name if new_name is not None and new_name != name else name
+
+    # Update the assistant
     assistant = client.beta.assistants.update(
         assistant.id,
-        name=new_name if new_name != name or new_name != None else name,
-        instructions=f"Your name is {new_name}, an assistant working for {company}. {instructions}",
-        file_ids=[file.id] if uploaded_file else None
+        name=updated_name,
+        instructions=f"Your name is {updated_name}, an assistant working for {company}. {instructions}",
+        file_ids=file_ids
     )
     
     return assistant

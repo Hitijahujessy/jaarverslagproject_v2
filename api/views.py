@@ -1,4 +1,4 @@
-from rest_framework import views, status
+from rest_framework import views, status, serializers
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,9 +15,17 @@ class NoAuthentication(BaseAuthentication):
     def authenticate(self, request):
         return None
 
-class AssistantDetailAPIView(views.APIView):
+class AssistantDetailEditAPIView(views.APIView):
     serializer_class = AssistantSerializer
+    url = serializers.HyperlinkedIdentityField(
+        view_name='edit',
+        lookup_field='pk',
+        read_only=True
+    )
+    title = serializers.CharField(read_only=True)
+
     authentication_classes = [TokenAuthentication]
+    permission_classes = [AllowAny]
     
     def get_object(self, pk):
         try:
@@ -42,7 +50,7 @@ class AssistantDetailAPIView(views.APIView):
 class AssistantView(views.APIView):
     serializer_class = AssistantSerializer
     authentication_classes = [TokenAuthentication]
-    
+    permission_classes = [AllowAny]
     def get(self, request, format=None):
         qs = Assistant.objects.all()
         serializer = self.serializer_class(qs, many=True)
@@ -59,7 +67,7 @@ class AssistantView(views.APIView):
 class ChatView(views.APIView):
     serializer_class = ChatSerializer
     authentication_classes = [TokenAuthentication]
-    
+    permission_classes = [AllowAny]
     def get(self, request, format=None):
         qs = CodeExplainer.objects.all()
         serializer = self.serializer_class(qs, many=True)
