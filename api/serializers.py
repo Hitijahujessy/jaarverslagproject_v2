@@ -9,12 +9,14 @@ from api.utils import send_code_to_api, create_new_assistant, modify_assistant, 
 
 class AssistantSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(required=True)
+    new_name = serializers.CharField(write_only=True, required=False)
     
     class Meta:
         model = Assistant
         fields = (
             "id",
             "name",
+            "new_name",
             "company_name",
             "instructions",
             "created_at",
@@ -22,6 +24,10 @@ class AssistantSerializer(serializers.ModelSerializer):
             "query_count",
             "files"
         )
+        extra_kwargs = {
+            'files': {'required': False},
+        }
+
         
     def create(self, validated_data):
         new_assistant = Assistant(**validated_data)
@@ -38,7 +44,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         
         # Update the instance with validated_data
         instance.name = validated_data.get('name', instance.name)
-        # new_name = validated_data.get('new_name')
+        new_name = validated_data.get('new_name', instance.name)
         instance.company_name = validated_data.get('company_name', instance.company_name)
         instance.instructions = validated_data.get('instructions', instance.instructions)
         instance.files = validated_data.get('files', instance.files)
@@ -47,7 +53,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         # Assuming modify_assistant updates some external system and doesn't return anything
         modify_assistant(
             instance.name, 
-            # new_name,
+            new_name,
             instance.company_name, 
             instance.instructions,
             instance.files)

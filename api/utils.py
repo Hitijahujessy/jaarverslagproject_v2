@@ -55,8 +55,8 @@ def modify_assistant(name, new_name, company, instructions, uploaded_file):
     
     assistant = client.beta.assistants.update(
         assistant.id,
-        name=new_name,
-        instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
+        name=new_name if new_name != name or new_name != None else name,
+        instructions=f"Your name is {new_name}, an assistant working for {company}. {instructions}",
         file_ids=[file.id] if uploaded_file else None
     )
     
