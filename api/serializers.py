@@ -26,6 +26,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         model = Assistant
         fields = (
             "id",
+            "openai_id",
             "url",
             "name",
             "new_name",
@@ -44,13 +45,16 @@ class AssistantSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Use .get to avoid KeyError if 'files' is not in validated_data
         files = validated_data.get('files')
-        new_assistant = Assistant(**validated_data)
-        data = create_new_assistant(
+        
+        openai_assistant = create_new_assistant(
             validated_data["name"], 
             validated_data["company_name"], 
             validated_data["instructions"], 
             files
             )
+        openai_id = openai_assistant.id
+        new_assistant = Assistant(openai_id=openai_id, **validated_data)
+        
         new_assistant.save()
         return new_assistant
     
