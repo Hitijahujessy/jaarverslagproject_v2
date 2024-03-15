@@ -82,7 +82,7 @@ class UserView(views.APIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny] # Temporarily AllowAny, change later
     def get(self, request, format=None):
-        qs = User.objects.all()
+        qs = ""#User.objects.all()
         serializer = self.serializer_class(qs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
@@ -92,7 +92,8 @@ class UserView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    
 class TokenView(ObtainAuthToken):
     serializer_class = TokenSerializer
-    permission_classes = [AllowAny] # Temporarily AllowAny, change later
+    permission_classes = [AllowAny]
