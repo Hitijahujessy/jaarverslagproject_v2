@@ -1,6 +1,24 @@
 # jaarverslagproject_v2 API Documentation
 Welcome to the MyProject API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
 
+## Table of Contents
+- [Base URL](base-url)
+- [Authentication](#authentication)
+- [Endpoints](#endpoints)
+    - [User Management](#user-management)
+      - [Create User](#create-user)
+    - [Authentication Token](#authentication-token)
+      - [Obtain Token](#obtain-token)
+    - [Assistant Management](#assistant-management)
+      - [List Assistants](#list-assistants)
+      - [Create Assistant](#create-assistant)
+      - [View Assistant](#view-assistant)
+      - [Update Assistant](#update-assistant)
+    - [Chat](#chat)
+      - [Create Chat Message](#create-chat-message)
+- [Status Codes](#status-codes)
+- [Rate Limiting](#rate-limiting)  
+
 ## Base URL
 All URLs referenced in the documentation have the following base:
 ```http://<your_domain>/api/v1/```
@@ -10,34 +28,40 @@ This API uses token-based authentication. To obtain a token, send a POST request
 
 ## Endpoints
 ### User Management
-Create User
+#### Create User
 - URL: /users/
 - Method: POST
 - Body: username, email, password
 - Description: Register a new user.
   
 ### Authentication Token
-Obtain Token
+#### Obtain Token
 - URL: /tokens/
 - Method: POST
 - Body: username, password
 - Description: Obtain an authentication token.
 
 ### Assistant Management
-List Assistants
+#### List Assistants
 - URL: /assistants/
 - Method: GET
 - Auth Required: Yes
 - Description: Retrieve a list of all assistants.
 
-Create Assistant
+#### Create Assistant
 - URL: /assistants/
 - Method: POST
 - Auth Required: Yes
 - Body: name, company_name, instructions, files (optional)
 - Description: Create a new assistant.
 
-Update Assistant
+#### View assistant
+- URL: /assistants/<int:pk>/
+- Method: GET
+- Auth Required: Yes
+- Description: Retrieve the data of a specific assistants.
+
+#### Update Assistant
 - URL: /assistants/<int:pk>/
 - Method: PUT
 - Auth Required: Yes
@@ -45,7 +69,7 @@ Update Assistant
 - Description: Update an existing assistant.
 
 ### Chat
-Create Chat Message
+#### Create Chat Message
 - URL: /chat/
 - Method: POST
 - Auth Required: Yes
@@ -53,7 +77,7 @@ Create Chat Message
 - Description: Send a message to an assistant and receive a response.
 
 ### Status Codes
-The API uses the following status codes:
+#### The API uses the following status codes:
 - 200 OK - The request was successful.
 - 201 Created - The request was successful, and a resource was created.
 - 400 Bad Request - The server could not understand the request due to invalid syntax.
