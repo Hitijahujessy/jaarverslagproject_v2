@@ -5,15 +5,11 @@ from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from django.urls import reverse
 # Internals
-from api.models import CodeExplainer, Assistant, Chat, UploadedFile
-from api.utils import send_code_to_api, create_new_assistant, modify_assistant, send_message_to_assistant
+from api.models import Assistant, Chat
+from api.utils import create_new_assistant, modify_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
-    # url = serializers.HyperlinkedIdentityField(
-    #     view_name="detail",
-    #     lookup_field='pk'
-    # )
     
     company_name = serializers.CharField(required=True)
     new_name = serializers.CharField(write_only=True, required=False)
@@ -114,27 +110,6 @@ class ChatSerializer(serializers.ModelSerializer):
         chat.save()
         return chat
     
-
-class CodeExplainSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = CodeExplainer
-        fields = (
-            "id",
-        "_input",
-        "_output"
-        )
-        extra_kwargs = {
-            "_output":{"read_only":True}
-        }
-    
-    def create(self, validated_data):
-        ce = CodeExplainer(**validated_data)
-        _output = send_code_to_api(validated_data["_input"])
-        ce._output = _output
-        ce.save()
-        return ce
-    
     
 class UserSerializer(serializers.ModelSerializer):
     
@@ -177,8 +152,3 @@ class TokenSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code="authentication")
         attrs["user"] = user
         return attrs
-
-class FileUploadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UploadedFile
-        fields = '__all__'

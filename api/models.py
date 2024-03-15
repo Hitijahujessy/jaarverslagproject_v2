@@ -4,6 +4,7 @@ from django.urls import reverse
 
 class Assistant(models.Model):
     name = models.CharField(max_length=120)
+    openai_id = models.CharField(max_length=25)
     company_name = models.CharField(max_length=120, default="Blauwe Ogen")
     instructions = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,25 +25,9 @@ class Assistant(models.Model):
     
 class Chat(models.Model):
     assistant = models.ForeignKey(Assistant, on_delete=models.CASCADE, null=True)
-    _input = models.TextField()
-    _output = models.TextField()
+    input = models.TextField()
+    output = models.TextField()
     
     class Meta:
         db_table = "t_chat"
-    
-
-class CodeExplainer(models.Model):
-    _input = models.TextField()
-    _output = models.TextField()
-    
-    class Meta:
-        db_table = "t_code_explainer"
-
-class UploadedFile(models.Model):
-    file = models.FileField()
-    uploaded_on = models.DateTimeField(auto_now_add=True)
-    User = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
-
-    def __str__(self):
-        return self.uploaded_on.date()
     
