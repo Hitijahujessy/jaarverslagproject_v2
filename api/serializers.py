@@ -3,19 +3,34 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
+from django.urls import reverse
 # Internals
 from api.models import CodeExplainer, Assistant, Chat, UploadedFile
 from api.utils import send_code_to_api, create_new_assistant, modify_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name="detail",
+    #     lookup_field='pk'
+    # )
+    
     company_name = serializers.CharField(required=True)
     new_name = serializers.CharField(write_only=True, required=False)
+    
+    url = serializers.SerializerMethodField()
+
+    def get_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(reverse('detail', kwargs={'pk': obj.pk}))
+        return None
     
     class Meta:
         model = Assistant
         fields = (
             "id",
+            "url",
             "name",
             "new_name",
             "company_name",

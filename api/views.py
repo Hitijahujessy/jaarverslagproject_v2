@@ -2,6 +2,8 @@ from rest_framework import views, status, serializers
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import Http404
+from django.urls import reverse
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BaseAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import User
@@ -15,13 +17,8 @@ class NoAuthentication(BaseAuthentication):
     def authenticate(self, request):
         return None
 
-class AssistantDetailEditAPIView(views.APIView):
+class AssistantDetailAPIView(views.APIView):
     serializer_class = AssistantSerializer
-    url = serializers.HyperlinkedIdentityField(
-        view_name='edit',
-        lookup_field='pk',
-        read_only=True
-    )
     title = serializers.CharField(read_only=True)
 
     authentication_classes = [TokenAuthentication]
@@ -31,11 +28,11 @@ class AssistantDetailEditAPIView(views.APIView):
         try:
             return Assistant.objects.get(pk=pk)
         except Assistant.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND
+            raise Http404
     
     def get(self, request, pk, format=None):
         assistant = self.get_object(pk)
-        serializer = self.serializer_class(assistant)  # Removed many=True because it's a single object
+        serializer = AssistantSerializer(assistant, context={'request': request})
         return Response(serializer.data)
     
     def put(self, request, pk, format=None):
@@ -53,7 +50,7 @@ class AssistantView(views.APIView):
     permission_classes = [AllowAny]
     def get(self, request, format=None):
         qs = Assistant.objects.all()
-        serializer = self.serializer_class(qs, many=True)
+        serializer = self.serializer_class(qs, many=True, context={'request': request})
         return Response(serializer.data)
     
     def post(self, request, format=None):
@@ -70,7 +67,7 @@ class ChatView(views.APIView):
     permission_classes = [AllowAny]
     def get(self, request, format=None):
         qs = CodeExplainer.objects.all()
-        serializer = self.serializer_class(qs, many=True)
+        serializer = self.serializer_class(qs, many=True, context={'request': request})
         return Response(serializer.data)
     
     def post(self, request, format=None):
