@@ -101,7 +101,7 @@ def send_message_to_assistant(name, msg):
     message = client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
-        content=f"{assistant.instructions}. {msg}.")
+        content=msg)
 
     # Send the message and pre-given instructions to assistant 
     run = client.beta.threads.runs.create(
