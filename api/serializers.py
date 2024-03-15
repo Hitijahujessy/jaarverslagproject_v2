@@ -96,17 +96,17 @@ class ChatSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "assistant_name",
-            "_input",
-            "_output"
+            "input",
+            "output"
         )
         extra_kwargs = {
-            "_output": {"read_only": True}
+            "output": {"read_only": True}
         }
         
     def create(self, validated_data):
         assistant = validated_data['assistant']  # Extract the assistant instance
-        _output = send_message_to_assistant(assistant.name, validated_data["_input"])
-        chat = Chat(**validated_data, _output=_output)
+        output = send_message_to_assistant(assistant.name, validated_data["input"])
+        chat = Chat(**validated_data, output=output)
         chat.save()
         return chat
     

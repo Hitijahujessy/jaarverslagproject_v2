@@ -11,7 +11,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 # Import your serializers and models
 from api.serializers import UserSerializer, TokenSerializer, AssistantSerializer, ChatSerializer
-from api.models import Assistant
+from api.models import Assistant, Chat
 
 class NoAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -66,8 +66,8 @@ class ChatView(views.APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny]
     def get(self, request, format=None):
-        qs = CodeExplainer.objects.all()
-        serializer = self.serializer_class(qs, many=True, context={'request': request})
+        chat = ""
+        serializer = self.serializer_class(chat, many=True, context={'request': request})
         return Response(serializer.data)
     
     def post(self, request, format=None):
