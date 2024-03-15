@@ -20,49 +20,69 @@ def create_thread(assistant):
     return client.beta.threads.create()
 
     
-# Create an assistant using user-given name and description (retrieved from AssistantModel)
-def create_new_assistant(name, company, instructions, uploaded_file):
-    # Read the content of the uploaded file into bytes
-    file_content = uploaded_file.read()
+# Create an assistant using user-given name and instructions (retrieved from AssistantModel)
+def create_new_assistant(name, company, instructions, uploaded_file=None):
+    # Initialize file_ids as an empty list
+    file_ids = []
     
-    file = client.files.create(
-      file=file_content,  # Pass the file content as bytes
-      purpose='assistants'
-    )
-    
-    description_string = f"You read and analyse files if possible. "
+    # Only proceed with file handling if uploaded_file is not None
+    if uploaded_file is not None:
+        # Read the content of the uploaded file into bytes
+        file_content = uploaded_file.read()
+        
+        # Create the file with OpenAI's API
+        file = client.files.create(
+            file=file_content,  # Pass the file content as bytes
+            purpose='assistants'
+        )
+        
+        # Add the created file's ID to the file_ids list
+        file_ids.append(file.id)
+        
+    description_string = f"Your name is {name}, an assistant working for {company}."
+    description_string += f"You read and analyse files if possible. "
     description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
     description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
     description_string += f"You can base your answers and refer to preview messages from the user. "
     description_string += f"End your message with a question if more clarity is needed."
     description_string += f"Answer as short as possible, without missing crucial information."
 
+        
+    
+    # Create the assistant with conditional file_ids
     assistant = client.beta.assistants.create(
         name=name,
-        instructions=description_string,
-        model="gpt-3.5-turbo-0125",
+        instructions=f"{description_string}. {instructions}",
+        model= "gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}],
-        file_ids=[file.id]
+        file_ids=file_ids  # Use the possibly empty file_ids list
     )
     
     return assistant
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
 def modify_assistant(name, new_name, company, instructions, uploaded_file):
+    print(new_name)
+    # Initialize file_ids as an empty list
+    file_ids = []
     if uploaded_file:
         file_content = uploaded_file.read()
         
+        # Create the file with OpenAI's API
         file = client.files.create(
             file=file_content,  # Pass the file content as bytes
             purpose='assistants'
         )
-    
+        
+        # Add the created file's ID to the file_ids list
+        file_ids.append(file.id)
+
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
     desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
-                                    # "desired_assistant" being an instance of AssistantModel
+                                      # "desired_assistant" being an instance of AssistantModel
     assistant = None
     for existing_assistant in existing_assistants.data:
         if existing_assistant.name == desired_assistant_name:
@@ -72,11 +92,23 @@ def modify_assistant(name, new_name, company, instructions, uploaded_file):
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
     
+    updated_name = new_name if new_name is not None and new_name != name else name
+
+    description_string = f"Your name is {name}, an assistant working for {company}."
+    description_string += f"You read and analyse files if possible. "
+    description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+    description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+    description_string += f"You can base your answers and refer to preview messages from the user. "
+    description_string += f"End your message with a question if more clarity is needed."
+    description_string += f"Answer as short as possible, without missing crucial information."
+
+
+    # Update the assistant
     assistant = client.beta.assistants.update(
         assistant.id,
-        name=new_name if new_name != name or new_name != None else name,
-        instructions=f"Your name is {new_name}, an assistant working for {company}. {instructions}",
-        file_ids=[file.id] if uploaded_file else None
+        name=updated_name,
+        instructions=f"{description_string} {instructions}",
+        file_ids=file_ids
     )
     
     return assistant

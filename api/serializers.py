@@ -2,19 +2,35 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from django.utils import timezone
+from django.urls import reverse
 # Internals
 from api.models import CodeExplainer, Assistant, Chat, UploadedFile
 from api.utils import send_code_to_api, create_new_assistant, modify_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name="detail",
+    #     lookup_field='pk'
+    # )
+    
     company_name = serializers.CharField(required=True)
     new_name = serializers.CharField(write_only=True, required=False)
+    
+    url = serializers.SerializerMethodField()
+
+    def get_url(self, obj):
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(reverse('detail', kwargs={'pk': obj.pk}))
+        return None
     
     class Meta:
         model = Assistant
         fields = (
             "id",
+            "url",
             "name",
             "new_name",
             "company_name",
@@ -40,28 +56,36 @@ class AssistantSerializer(serializers.ModelSerializer):
         return new_assistant
     
     def update(self, instance, validated_data):
-        # new_name = validated_data.get('new_name')
-        
-        # Update the instance with validated_data
-        instance.name = validated_data.get('name', instance.name)
-        new_name = validated_data.get('new_name', instance.name)
+        # Directly update instance fields with new values from validated_data
+        new_name = validated_data.get('new_name', None)  # Assume 'new_name' is the field for updates
+
         instance.company_name = validated_data.get('company_name', instance.company_name)
         instance.instructions = validated_data.get('instructions', instance.instructions)
-        instance.files = validated_data.get('files', instance.files)
-        
-        # Now, you can call your modify_assistant function if needed
-        # Assuming modify_assistant updates some external system and doesn't return anything
+        instance.updated_at = timezone.now()
+        # Check if 'files' is in validated_data and only update if present
+        if 'files' in validated_data:
+            instance.files = validated_data['files']
+        else:
+            instance.files = instance.files
+
+        # Assuming modify_assistant updates the name in an external OpenAI API
         modify_assistant(
             instance.name, 
             new_name,
             instance.company_name, 
             instance.instructions,
-            instance.files)
-
-        # Don't forget to save the instance after modifying it
-        instance.save()
+            instance.files
+        )
         
-        # Return the updated instance
+        if new_name:
+            instance.name = new_name  # Update the name if new_name is provided
+            
+        # Save the instance after all updates
+        instance.save()
+
+        # Refresh the instance from DB to reflect any changes
+        instance.refresh_from_db()
+
         return instance
     
     
