@@ -30,7 +30,6 @@ def create_new_assistant(name, company, instructions, uploaded_file):
       purpose='assistants'
     )
     
-
     description_string = f"You read and analyse files if possible. "
     description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
     description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
