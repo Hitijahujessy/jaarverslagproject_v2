@@ -182,22 +182,4 @@ def send_message_to_assistant(name, msg, thread_id=None):
         content = message.content[0].text.value
         
         return content
-
-
-def send_code_to_api(code):
-    try:
-        res = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are an experienced developer."},
-                {"role": "user", "content": f"Tell me in what language is this code written? {code}"},
-            ]
-        )
-        return res.choices[0].message.content
-    except OpenAI.error.APIError as e:
-        raise ValueError(f"OpenAI API returned an API Error: {e}")
-    except OpenAI.error.APIConnectionError as e:
-        raise ValueError(f"Failed to connect to OpenAI API: {e}")
-    except OpenAI.error.RateLimitError as e:
-        raise ValueError(f"OpenAI API request exceeded rate limit: {e}")
     
