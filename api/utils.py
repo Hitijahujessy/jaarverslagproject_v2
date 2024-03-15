@@ -169,10 +169,11 @@ def send_message_to_assistant(name, msg, thread_id=None):
     # Wait for connection with the OpenAI API
     wait_on_run(run, thread)
 
-
     # Retrieve the conversation messages
     messages = client.beta.threads.messages.list(
-        thread_id=thread.id
+        thread_id=thread.id,
+        order="asc",
+        after=message.id
     )
 
     # Retrieve and return the response message
