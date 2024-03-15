@@ -90,6 +90,7 @@ class CodeExplainView(views.APIView):
         
 class UserView(views.APIView):
     serializer_class = UserSerializer
+    permission_classes = [AllowAny] # Temporarily AllowAny, change later
     def get(self, request, format=None):
         qs = User.objects.all()
         serializer = self.serializer_class(qs, many=True)
@@ -104,6 +105,7 @@ class UserView(views.APIView):
 
 class TokenView(ObtainAuthToken):
     serializer_class = TokenSerializer
+    permission_classes = [AllowAny] # Temporarily AllowAny, change later
 
 class FileUploadAPIView(APIView):
     authentication_classes = [TokenAuthentication]
