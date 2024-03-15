@@ -31,6 +31,7 @@ def create_new_assistant(name, company, instructions, uploaded_file):
     )
     
 
+<<<<<<< Updated upstream
     description_string = f"You read and analyse files if possible. "
     description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
     description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
@@ -41,6 +42,13 @@ def create_new_assistant(name, company, instructions, uploaded_file):
     assistant = client.beta.assistants.create(
         name=name,
         instructions=description_string,
+=======
+    
+
+    assistant = client.beta.assistants.create(
+        name=name,
+        instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
+>>>>>>> Stashed changes
         model="gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}],
         file_ids=[file.id]
@@ -89,7 +97,7 @@ def wait_on_run(run, thread):
             thread_id=thread.id,
             run_id=run.id,
         )
-        time.sleep(.5)
+        time.sleep(3.5)
 
     if run.status == "failed":
         print(run.failed_at)
