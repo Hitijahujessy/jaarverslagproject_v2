@@ -61,7 +61,7 @@ def create_new_assistant(name, company, instructions, uploaded_file=None):
     return assistant
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
-def modify_assistant(name, new_name, company, instructions, uploaded_file):
+def modify_assistant(openai_id, new_name, company, instructions, uploaded_file):
     print(new_name)
     # Initialize file_ids as an empty list
     file_ids = []
@@ -81,27 +81,26 @@ def modify_assistant(name, new_name, company, instructions, uploaded_file):
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
-    desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
+    desired_assistant_id = openai_id  # Placeholder, could be something like "desired_assistant.name", 
                                       # "desired_assistant" being an instance of AssistantModel
     assistant = None
     for existing_assistant in existing_assistants.data:
-        if existing_assistant.name == desired_assistant_name:
+        if existing_assistant.id == desired_assistant_id:
             assistant = existing_assistant
             break
       
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
     
-    updated_name = new_name if new_name is not None and new_name != name else name
+    updated_name = new_name if new_name is not None and new_name != assistant.name else assistant.name
 
-    description_string = f"Your name is {name}, an assistant working for {company}."
+    description_string = f"Your name is {assistant.name}, an assistant working for {company}."
     description_string += f"You read and analyse files if possible. "
     description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
     description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
     description_string += f"You can base your answers and refer to preview messages from the user. "
     description_string += f"End your message with a question if more clarity is needed."
     description_string += f"Answer as short as possible, without missing crucial information."
-
 
     # Update the assistant
     assistant = client.beta.assistants.update(

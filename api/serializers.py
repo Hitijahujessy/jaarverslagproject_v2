@@ -61,7 +61,6 @@ class AssistantSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Directly update instance fields with new values from validated_data
         new_name = validated_data.get('new_name', None)  # Assume 'new_name' is the field for updates
-
         instance.company_name = validated_data.get('company_name', instance.company_name)
         instance.instructions = validated_data.get('instructions', instance.instructions)
         instance.updated_at = timezone.now()
@@ -73,7 +72,7 @@ class AssistantSerializer(serializers.ModelSerializer):
 
         # Assuming modify_assistant updates the name in an external OpenAI API
         modify_assistant(
-            instance.name, 
+            instance.openai_id, 
             new_name,
             instance.company_name, 
             instance.instructions,
