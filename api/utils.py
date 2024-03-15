@@ -128,24 +128,9 @@ def wait_on_run(run, thread):
 
 
 # Send/retrieve messages to/from assistant
-def send_message_to_assistant(name, msg, thread_id=None):
-    # Retrieve the list of existing assistants
-    existing_assistants = client.beta.assistants.list()
-
-    # Check if the desired assistant exists in the list
-    desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
-                                    # "desired_assistant" being an instance
-
-    # of AssistantModel.
-    # Should also check credentials before allowing a connection with an Assistant
-    assistant = None
-    for existing_assistant in existing_assistants.data:
-        if existing_assistant.name == desired_assistant_name:
-            assistant = existing_assistant
-            break
-    
+def send_message_to_assistant(openai_id, msg, thread_id=None):
     # Retrieve assistant
-    assistant = client.beta.assistants.retrieve(assistant.id)
+    assistant = client.beta.assistants.retrieve(openai_id)
 
     # Create a thread if thread_id is not provided
     if not thread_id:

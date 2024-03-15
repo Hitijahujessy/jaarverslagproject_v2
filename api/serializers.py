@@ -89,24 +89,30 @@ class AssistantSerializer(serializers.ModelSerializer):
     
     
 class ChatSerializer(serializers.ModelSerializer):
-    assistant_name = serializers.SlugRelatedField(slug_field='name', queryset=Assistant.objects.all(), source='assistant')
+    assistant_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Chat
         fields = (
             "id",
-            "assistant_name",
+            "assistant_id",
             "input",
             "output"
         )
         extra_kwargs = {
-            "output": {"read_only": True}
+            "output": {"read_only": True},
         }
         
     def create(self, validated_data):
-        assistant = validated_data['assistant']  # Extract the assistant instance
-        output = send_message_to_assistant(assistant.name, validated_data["input"])
-        chat = Chat(**validated_data, output=output)
+        # Use the assistant_id to get the Assistant instance
+        assistant_id = validated_data.pop('assistant_id')
+        assistant = Assistant.objects.get(id=assistant_id)
+
+        # Now that you have the assistant, you can use its openai_id
+        output = send_message_to_assistant(assistant.openai_id, validated_data["input"])
+
+        # Create the Chat instance with the output
+        chat = Chat(assistant=assistant, **validated_data, output=output)
         chat.save()
         return chat
     

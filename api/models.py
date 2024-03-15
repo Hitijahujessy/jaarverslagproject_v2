@@ -4,7 +4,7 @@ from django.urls import reverse
 
 class Assistant(models.Model):
     name = models.CharField(max_length=120)
-    openai_id = models.CharField(max_length=25, default="asst_67890123456789012345")
+    openai_id = models.CharField(max_length=29, default="asst_678901234567890123456789")
     company_name = models.CharField(max_length=120, default="Blauwe Ogen")
     instructions = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
