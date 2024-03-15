@@ -1,3 +1,9 @@
+
+# In this updated version, I've added the `create_thread` function to create a new thread.
+# The `send_message_to_assistant` function now has an additional argument `thread_id`, which specifies the ID of the thread to which the message should be sent.
+# If `thread_id` is not provided, a new thread is created using the `create_thread` function. Otherwise, the message is added to the existing thread specified by `thread_id`.
+
+
 from openai import OpenAI
 from django.conf import settings
 import time
@@ -7,6 +13,13 @@ client = OpenAI(
     api_key=settings.APIKEY,
 )
 
+# Function to create a new thread
+def create_thread(assistant):
+    # Retrieve the assistant object
+    assistant = client.beta.assistants.retrieve(assistant.id)
+    return client.beta.threads.create()
+
+    
 # Create an assistant using user-given name and description (retrieved from AssistantModel)
 def create_new_assistant(name, company, instructions, uploaded_file):
     # Read the content of the uploaded file into bytes
@@ -17,10 +30,18 @@ def create_new_assistant(name, company, instructions, uploaded_file):
       purpose='assistants'
     )
     
+
+    description_string = f"You read and analyse files if possible. "
+    description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+    description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+    description_string += f"You can base your answers and refer to preview messages from the user. "
+    description_string += f"End your message with a question if more clarity is needed."
+    description_string += f"Answer as short as possible, without missing crucial information."
+
     assistant = client.beta.assistants.create(
         name=name,
-        instructions=f"Your name is {name}, an assistant working for {company}. {instructions}",
-        model= "gpt-3.5-turbo-0125",
+        instructions=description_string,
+        model="gpt-3.5-turbo-0125",
         tools=[{"type": "retrieval"}],
         file_ids=[file.id]
     )
@@ -29,13 +50,12 @@ def create_new_assistant(name, company, instructions, uploaded_file):
 
 # Modify an assistant using user-given name and description (retrieved from AssistantModel)
 def modify_assistant(name, new_name, company, instructions, uploaded_file):
-    print(new_name)
     if uploaded_file:
         file_content = uploaded_file.read()
         
         file = client.files.create(
-        file=file_content,  # Pass the file content as bytes
-        purpose='assistants'
+            file=file_content,  # Pass the file content as bytes
+            purpose='assistants'
         )
     
     # Retrieve the list of existing assistants
@@ -43,12 +63,12 @@ def modify_assistant(name, new_name, company, instructions, uploaded_file):
 
     # Check if the desired assistant exists in the list
     desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
-                                      # "desired_assistant" being an instance of AssistantModel
+                                    # "desired_assistant" being an instance of AssistantModel
     assistant = None
     for existing_assistant in existing_assistants.data:
-      if existing_assistant.name == desired_assistant_name:
-          assistant = existing_assistant
-          break
+        if existing_assistant.name == desired_assistant_name:
+            assistant = existing_assistant
+            break
       
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
@@ -77,25 +97,30 @@ def wait_on_run(run, thread):
 
 
 # Send/retrieve messages to/from assistant
-def send_message_to_assistant(name, msg):
+def send_message_to_assistant(name, msg, thread_id=None):
     # Retrieve the list of existing assistants
     existing_assistants = client.beta.assistants.list()
 
     # Check if the desired assistant exists in the list
     desired_assistant_name = name  # Placeholder, could be something like "desired_assistant.name", 
-                                      # "desired_assistant" being an instance of AssistantModel.
-                                      # Should also check credentials before allowing a connection with an Assistant
+                                    # "desired_assistant" being an instance
+
+    # of AssistantModel.
+    # Should also check credentials before allowing a connection with an Assistant
     assistant = None
     for existing_assistant in existing_assistants.data:
-      if existing_assistant.name == desired_assistant_name:
-          assistant = existing_assistant
-          break
-      
+        if existing_assistant.name == desired_assistant_name:
+            assistant = existing_assistant
+            break
+    
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(assistant.id)
-    
-    # Create a thread (conversation)
-    thread = client.beta.threads.create()
+
+    # Create a thread if thread_id is not provided
+    if not thread_id:
+        thread = create_thread(assistant)
+    else:
+        thread = client.beta.threads.retrieve(thread_id)
 
     # Define the user's message
     message = client.beta.threads.messages.create(
@@ -125,6 +150,7 @@ def send_message_to_assistant(name, msg):
         content = message.content[0].text.value
         
         return content
+
 
 def send_code_to_api(code):
     try:
