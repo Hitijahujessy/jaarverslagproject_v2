@@ -46,12 +46,15 @@ class AssistantSerializer(serializers.ModelSerializer):
 
         
     def create(self, validated_data):
+        # Use .get to avoid KeyError if 'files' is not in validated_data
+        files = validated_data.get('files')
         new_assistant = Assistant(**validated_data)
         data = create_new_assistant(
             validated_data["name"], 
             validated_data["company_name"], 
             validated_data["instructions"], 
-            validated_data["files"])
+            files
+            )
         new_assistant.save()
         return new_assistant
     
