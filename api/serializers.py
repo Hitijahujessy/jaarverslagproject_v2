@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.urls import reverse
 # Internals
 from api.models import Assistant, Chat
-from api.utils import create_new_assistant, modify_assistant, send_message_to_assistant
+from api.utils import create_new_assistant, modify_assistant, delete_assistant, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class AssistantSerializer(serializers.ModelSerializer):
         """
         request = self.context.get('request')
         if request:
-            return request.build_absolute_uri(reverse('assistant-detail', kwargs={'pk': obj.pk}))
+            return request.build_absolute_uri(reverse('detail', kwargs={'pk': obj.pk}))
         return None
     
     class Meta:
@@ -120,6 +120,16 @@ class AssistantSerializer(serializers.ModelSerializer):
         instance.save()
         instance.refresh_from_db()
         return instance
+    
+    def delete(self, instance):
+
+        delete_assistant(
+            instance.openai_id 
+        )
+            
+        instance.delete()
+        # instance.refresh_from_db()
+        return {"status": "deleted"}
     
     
 class ChatSerializer(serializers.ModelSerializer):

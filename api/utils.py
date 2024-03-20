@@ -112,6 +112,27 @@ def modify_assistant(openai_id, new_name, company, instructions, uploaded_file):
     
     return assistant
 
+def delete_assistant(openai_id):
+     # Retrieve the list of existing assistants
+    existing_assistants = client.beta.assistants.list()
+
+    # Check if the desired assistant exists in the list
+    desired_assistant_id = openai_id  # Placeholder, could be something like "desired_assistant.name", 
+                                      # "desired_assistant" being an instance of AssistantModel
+    assistant = None
+    for existing_assistant in existing_assistants.data:
+        if existing_assistant.id == desired_assistant_id:
+            assistant = existing_assistant
+            break
+      
+    # Retrieve assistant
+    assistant = client.beta.assistants.retrieve(assistant.id)
+    print(assistant.name)
+    
+    client.beta.assistants.delete(assistant.id)
+    
+    print(assistant.name)
+
 # Wait for the connection with the OpenAI API is established before trying to start a conversation
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
@@ -124,7 +145,6 @@ def wait_on_run(run, thread):
     if run.status == "failed":
         print(run.failed_at)
     return run
-
 
 # Send/retrieve messages to/from assistant
 def send_message_to_assistant(openai_id, msg, thread_id=None):

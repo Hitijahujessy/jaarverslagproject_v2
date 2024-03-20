@@ -46,6 +46,15 @@ class AssistantDetailAPIView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        assistant = self.get_object(pk)
+        serializer = self.serializer_class(assistant, data=request.data)
+        if serializer.is_valid():
+            # serializer.delete(assistant)
+            # serializer = self.serializer_class(data=request.data)
+            return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AssistantView(views.APIView):
@@ -69,6 +78,9 @@ class AssistantView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
 
 
 class ChatView(views.APIView):
