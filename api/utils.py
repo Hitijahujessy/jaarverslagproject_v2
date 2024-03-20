@@ -46,8 +46,6 @@ def create_new_assistant(name, company, instructions, uploaded_file=None):
     description_string += f"You can base your answers and refer to preview messages from the user. "
     description_string += f"End your message with a question if more clarity is needed."
     description_string += f"Answer as short as possible, without missing crucial information."
-
-        
     
     # Create the assistant with conditional file_ids
     assistant = client.beta.assistants.create(
