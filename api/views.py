@@ -1,6 +1,4 @@
 from rest_framework import views, status, serializers
-from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import Http404
 from django.urls import reverse
@@ -11,7 +9,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 # Import your serializers and models
 from api.serializers import UserSerializer, TokenSerializer, AssistantSerializer, ChatSerializer
-from api.models import Assistant, Chat
+from api.models import Assistant
 
 class NoAuthentication(BaseAuthentication):
     """Custom authentication class that bypasses all authentication."""
