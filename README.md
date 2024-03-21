@@ -1,7 +1,7 @@
 <div align="center">
     
-# jaarverslagproject_v2 API Documentation
-Welcome to the MyProject API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
+# AIConvoKit API Documentation
+Welcome to the AIConvoKit API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
 
 
 [![Lang](https://skillicons.dev/icons?i=python)](https://skillicons.dev) [![Lang](https://skillicons.dev/icons?i=django)](https://skillicons.dev)
