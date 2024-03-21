@@ -25,9 +25,13 @@ class Assistant(models.Model):
     
 class Chat(models.Model):
     assistant = models.ForeignKey(Assistant, on_delete=models.CASCADE, null=True)
+    thread_id = models.CharField(max_length=len("thread_VqYz7vQJX4jJjkIMOA522vah"), null=True)
     input = models.TextField()
     output = models.TextField()
     
     class Meta:
         db_table = "t_chat"
+        
+    def get_absolute_url(self):
+        return reverse("chat-detail", kwargs={"pk": self.pk})
     

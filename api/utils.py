@@ -12,13 +12,6 @@ import time
 client = OpenAI(
     api_key=settings.APIKEY,
 )
-
-# Function to create a new thread
-def create_thread(assistant):
-    # Retrieve the assistant object
-    assistant = client.beta.assistants.retrieve(assistant.id)
-    return client.beta.threads.create()
-
     
 # Create an assistant using user-given name and instructions (retrieved from AssistantModel)
 def create_new_assistant(name, company, instructions, uploaded_file=None):
@@ -131,6 +124,7 @@ def delete_assistant(openai_id):
     
     print(assistant.name)
 
+
 # Wait for the connection with the OpenAI API is established before trying to start a conversation
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
@@ -144,16 +138,25 @@ def wait_on_run(run, thread):
         print(run.failed_at)
     return run
 
+# Function to create a new thread
+def create_thread():
+    # Retrieve the assistant object
+    thread = client.beta.threads.create()
+    print(f"created thread with id {thread.id}")
+    return thread.id
+
 # Send/retrieve messages to/from assistant
-def send_message_to_assistant(openai_id, msg, thread_id=None):
+def send_message_to_assistant(openai_id, thread_id, msg):
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(openai_id)
 
     # Create a thread if thread_id is not provided
-    if not thread_id:
-        thread = create_thread(assistant)
-    else:
-        thread = client.beta.threads.retrieve(thread_id)
+    # if not thread_id:
+    #     thread = client.beta.threads.create()
+    #     print(f"created thread with id {thread.id}")
+    # else:
+    thread = client.beta.threads.retrieve(thread_id)
+    print(f"retrieved thread with id {thread.id}")
 
     # Define the user's message
     message = client.beta.threads.messages.create(

@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.urls import reverse
 # Internals
 from api.models import Assistant, Chat
-from api.utils import create_new_assistant, modify_assistant, delete_assistant, send_message_to_assistant
+from api.utils import create_new_assistant, modify_assistant, delete_assistant, create_thread, send_message_to_assistant
 
 
 class AssistantSerializer(serializers.ModelSerializer):
@@ -147,48 +147,92 @@ class ChatSerializer(serializers.ModelSerializer):
 
     # Write-only field to capture the assistant's ID involved in the chat
     assistant_id = serializers.IntegerField(write_only=True)
+    
+        # Dynamically generated field for the chat's detail view URL
+    url = serializers.SerializerMethodField()
+
+    def get_url(self, obj):
+        """
+        Method to generate a fully qualified URL for the assistant's detail view.
+
+        Parameters:
+            obj (Assistant): The Assistant instance for which the URL is being generated.
+
+        Returns:
+            str: The fully qualified URL to the assistant's detail view, if request context is available. Otherwise, None.
+        """
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(reverse('chat-detail', kwargs={'pk': obj.pk}))
+        return None
 
     class Meta:
         model = Chat
         fields = (
             "id",          # Unique identifier for the chat instance
+            "url",
             "assistant_id",# ID of the assistant involved in the chat (write-only)
+            "thread_id",
             "input",       # User input message to the assistant
             "output"       # Assistant's response to the user input
         )
         extra_kwargs = {
             "output": {"read_only": True},  # Output is generated, thus read-only
+            "thread_id": {"required": False},
+            "input": {"required": False},
         }
-        
+      
+      
     def create(self, validated_data):
-        """
-        Custom method to create a new Chat instance. This method retrieves the specified
-        assistant based on the provided assistant ID, sends the user's input message to 
-        the assistant, and saves the chat instance with the assistant's response as output.
+        # Assuming send_message_to_assistant now properly handles thread_id creation and message sending
+        thread_id = create_thread()
 
-        Parameters:
-            validated_data (dict): Data validated by the serializer to be used in creating
-                a new Chat instance. Must include 'assistant_id' and 'input'.
-
-        Returns:
-            Chat: The newly created Chat instance, including the assistant's response to 
-            the user's input.
-
-        Raises:
-            models.Assistant.DoesNotExist: If no assistant is found matching the provided
-                assistant_id in validated_data.
-        """
+        chat = Chat.objects.create(thread_id=thread_id)
+        return chat
+    
+    def update(self, instance, validated_data):
         # Extract the assistant_id and use it to retrieve the Assistant instance
         assistant_id = validated_data.pop('assistant_id')
         assistant = Assistant.objects.get(id=assistant_id)
 
         # Use the assistant's OpenAI ID to send the user's input and obtain a response
-        output = send_message_to_assistant(assistant.openai_id, validated_data["input"])
+        output = send_message_to_assistant(assistant.openai_id, instance.thread_id, validated_data["input"])
 
         # Create and save the new Chat instance with both input and obtained output
-        chat = Chat(assistant=assistant, **validated_data, output=output)
+        chat = Chat(assistant=assistant, thread_id=instance.thread_id, **validated_data, output=output)
         chat.save()
         return chat
+    
+      
+    # def create(self, instance, validated_data):
+    #     """
+    #     Custom method to create a new Chat instance. This method retrieves the specified
+    #     assistant based on the provided assistant ID, sends the user's input message to 
+    #     the assistant, and saves the chat instance with the assistant's response as output.
+
+    #     Parameters:
+    #         validated_data (dict): Data validated by the serializer to be used in creating
+    #             a new Chat instance. Must include 'assistant_id' and 'input'.
+
+    #     Returns:
+    #         Chat: The newly created Chat instance, including the assistant's response to 
+    #         the user's input.
+
+    #     Raises:
+    #         models.Assistant.DoesNotExist: If no assistant is found matching the provided
+    #             assistant_id in validated_data.
+    #     """
+    #     # Extract the assistant_id and use it to retrieve the Assistant instance
+    #     assistant_id = validated_data.pop('assistant_id')
+    #     assistant = Assistant.objects.get(id=assistant_id)
+
+    #     # Use the assistant's OpenAI ID to send the user's input and obtain a response
+    #     output, new_thread_id = send_message_to_assistant(assistant.openai_id, instance.thread_id, validated_data["input"])
+
+    #     # Create and save the new Chat instance with both input and obtained output
+    #     chat = Chat(assistant=assistant, thread_id=new_thread_id, **validated_data, output=output)
+    #     chat.save()
+    #     return chat
     
     
 class UserSerializer(serializers.ModelSerializer):

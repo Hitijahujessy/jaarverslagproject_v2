@@ -9,7 +9,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 # Import your serializers and models
 from api.serializers import UserSerializer, TokenSerializer, AssistantSerializer, ChatSerializer
-from api.models import Assistant
+from api.models import Assistant, Chat
 
 class NoAuthentication(BaseAuthentication):
     """Custom authentication class that bypasses all authentication."""
@@ -59,7 +59,15 @@ class AssistantDetailAPIView(views.APIView):
 
 class AssistantView(views.APIView):
     """
-    API view to list or create assistants.
+    A view that supports listing all Assistant instances or creating a new Assistant instance.
+    This view handles GET and POST requests: GET requests return a list of all assistants,
+    and POST requests allow for the creation of a new assistant with provided data.
+
+    Attributes:
+        serializer_class (AssistantSerializer): The serializer class used for validating and
+            deserializing input, and for serializing output.
+        authentication_classes (list): Authentication methods/classes used for this view.
+        permission_classes (list): Permissions required to interact with this view.
     """
     serializer_class = AssistantSerializer
     authentication_classes = [TokenAuthentication]
@@ -81,6 +89,8 @@ class AssistantView(views.APIView):
     
     
     
+    
+    
 
 
 class ChatView(views.APIView):
@@ -93,7 +103,7 @@ class ChatView(views.APIView):
 
     def get(self, request, format=None):
         """Handle GET request to list all chat records (Dummy implementation)."""
-        chat = ""  # Placeholder for actual chat retrieval logic
+        chat = Chat.objects.all()  # Placeholder for actual chat retrieval logic
         serializer = self.serializer_class(chat, many=True, context={'request': request})
         return Response(serializer.data)
     
@@ -104,6 +114,38 @@ class ChatView(views.APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ChatDetailAPIView(views.APIView):
+    """
+    API view to retrieve, update, or delete assistant details.
+    """
+    serializer_class = ChatSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [AllowAny]
+    
+    def get_object(self, pk):
+        """Attempt to get the assistant by primary key (pk) or raise Http404."""
+        try:
+            return Chat.objects.get(pk=pk)
+        except Chat.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk, format=None):
+        """Handle GET request to retrieve an assistant by pk."""
+        chat = self.get_object(pk)
+        serializer = ChatSerializer(chat, context={'request': request})
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        """Handle PUT request to update an assistant by pk."""
+        chat = self.get_object(pk)
+        serializer = self.serializer_class(chat, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
         
 class UserView(views.APIView):
