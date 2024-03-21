@@ -1,5 +1,13 @@
+<div align="center">
+    
 # jaarverslagproject_v2 API Documentation
 Welcome to the MyProject API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
+
+
+[![Lang](https://skillicons.dev/icons?i=python)](https://skillicons.dev) [![Lang](https://skillicons.dev/icons?i=django)](https://skillicons.dev)
+
+</div>
+
 
 ## Table of Contents
 - [Base URL](base-url)
@@ -18,7 +26,7 @@ Welcome to the MyProject API! This API allows you to interact with our assistant
       - [Create Chat](#create-chat)
       - [Send and Receive Messages](#send-and-receive-messages)
 - [Status Codes](#status-codes)
-- [Rate Limiting](#rate-limiting)  
+- [Rate Limiting](#rate-limiting)
 
 ## Base URL
 All URLs referenced in the documentation have the following base:
@@ -95,3 +103,4 @@ URL: /chat/<int:pk>/
 
 ### Rate Limiting
 Please note that rate limiting may be applied to ensure fair usage. If you encounter 429 Too Many Requests, you are advised to slow down your request rate.
+
