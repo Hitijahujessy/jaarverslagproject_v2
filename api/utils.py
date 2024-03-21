@@ -31,14 +31,22 @@ def create_new_assistant(name, company, instructions, uploaded_file=None):
         
         # Add the created file's ID to the file_ids list
         file_ids.append(file.id)
-        
-    description_string = f"Your name is {name}, an assistant working for {company}."
-    description_string += f"You read and analyse files if possible. "
-    description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
-    description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
-    description_string += f"You can base your answers and refer to preview messages from the user. "
-    description_string += f"End your message with a question if more clarity is needed."
-    description_string += f"Answer as short as possible, without missing crucial information."
+    
+    if uploaded_file is None:    
+        description_string = f"Your name is {name}, an assistant working for {company}."
+        description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+        description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+        description_string += f"You can base your answers and refer to preview messages from the user. "
+        description_string += f"End your message with a question if more clarity is needed."
+        description_string += f"Answer as short as possible, without missing crucial information."
+    else:    
+        description_string = f"Your name is {name}, an assistant working for {company}."
+        description_string += f"You read and analyse files if possible. "
+        description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+        description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+        description_string += f"You can base your answers and refer to preview messages from the user. "
+        description_string += f"End your message with a question if more clarity is needed."
+        description_string += f"Answer as short as possible, without missing crucial information."
     
     # Create the assistant with conditional file_ids
     assistant = client.beta.assistants.create(
@@ -85,13 +93,21 @@ def modify_assistant(openai_id, new_name, company, instructions, uploaded_file):
     
     updated_name = new_name if new_name is not None and new_name != assistant.name else assistant.name
 
-    description_string = f"Your name is {assistant.name}, an assistant working for {company}."
-    description_string += f"You read and analyse files if possible. "
-    description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
-    description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
-    description_string += f"You can base your answers and refer to preview messages from the user. "
-    description_string += f"End your message with a question if more clarity is needed."
-    description_string += f"Answer as short as possible, without missing crucial information."
+    if uploaded_file is None:    
+        description_string = f"Your name is {updated_name}, an assistant working for {company}."
+        description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+        description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+        description_string += f"You can base your answers and refer to preview messages from the user. "
+        description_string += f"End your message with a question if more clarity is needed."
+        description_string += f"Answer as short as possible, without missing crucial information."
+    else:    
+        description_string = f"Your name is {updated_name}, an assistant working for {company}."
+        description_string += f"You read and analyse files if possible. "
+        description_string += f"You are designed to make customers feel like they're chatting with a real help desk agent. "
+        description_string += f"You are trained to communicate naturally and to answer user's questions in a way that mimics human interaction. "
+        description_string += f"You can base your answers and refer to preview messages from the user. "
+        description_string += f"End your message with a question if more clarity is needed."
+        description_string += f"Answer as short as possible, without missing crucial information."
 
     # Update the assistant
     assistant = client.beta.assistants.update(

@@ -203,37 +203,6 @@ class ChatSerializer(serializers.ModelSerializer):
         chat.save()
         return chat
     
-      
-    # def create(self, instance, validated_data):
-    #     """
-    #     Custom method to create a new Chat instance. This method retrieves the specified
-    #     assistant based on the provided assistant ID, sends the user's input message to 
-    #     the assistant, and saves the chat instance with the assistant's response as output.
-
-    #     Parameters:
-    #         validated_data (dict): Data validated by the serializer to be used in creating
-    #             a new Chat instance. Must include 'assistant_id' and 'input'.
-
-    #     Returns:
-    #         Chat: The newly created Chat instance, including the assistant's response to 
-    #         the user's input.
-
-    #     Raises:
-    #         models.Assistant.DoesNotExist: If no assistant is found matching the provided
-    #             assistant_id in validated_data.
-    #     """
-    #     # Extract the assistant_id and use it to retrieve the Assistant instance
-    #     assistant_id = validated_data.pop('assistant_id')
-    #     assistant = Assistant.objects.get(id=assistant_id)
-
-    #     # Use the assistant's OpenAI ID to send the user's input and obtain a response
-    #     output, new_thread_id = send_message_to_assistant(assistant.openai_id, instance.thread_id, validated_data["input"])
-
-    #     # Create and save the new Chat instance with both input and obtained output
-    #     chat = Chat(assistant=assistant, thread_id=new_thread_id, **validated_data, output=output)
-    #     chat.save()
-    #     return chat
-    
     
 class UserSerializer(serializers.ModelSerializer):
     """
