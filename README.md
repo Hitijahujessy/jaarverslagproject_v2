@@ -89,7 +89,7 @@ This API uses token-based authentication. To obtain a token, send a POST request
 URL: /chat/<int:pk>/
 - Method: PUT
 - Auth Required: Yes
-- Body: assistant_name, input
+- Body: assistant_id, input
 - Description: Send a message to an assistant and returns a response.
 
 ### Status Codes
