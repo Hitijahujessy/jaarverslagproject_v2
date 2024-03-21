@@ -16,7 +16,7 @@ Welcome to the MyProject API! This API allows you to interact with our assistant
       - [Update Assistant](#update-assistant)
     - [Chat](#chat)
       - [Create Chat](#create-chat)
-      - [Send and Receive Messages)(#send-and-receive-messages)
+      - [Send and Receive Messages](#send-and-receive-messages)
 - [Status Codes](#status-codes)
 - [Rate Limiting](#rate-limiting)  
 
