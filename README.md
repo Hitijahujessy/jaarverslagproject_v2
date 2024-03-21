@@ -73,8 +73,8 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - URL: /chat/
 - Method: POST
 - Auth Required: Yes
-- Body: assistant_name, _input
-- Description: Send a message to an assistant and receive a response.
+- Body: assistant_name, input
+- Description: Send a message to an assistant and receive a response. 
 
 ### Status Codes
 #### The API uses the following status codes:
