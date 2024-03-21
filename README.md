@@ -15,7 +15,8 @@ Welcome to the MyProject API! This API allows you to interact with our assistant
       - [View Assistant](#view-assistant)
       - [Update Assistant](#update-assistant)
     - [Chat](#chat)
-      - [Create Chat Message](#create-chat-message)
+      - [Create Chat](#create-chat)
+      - [Send and Receive Messages)(#send-and-receive-messages)
 - [Status Codes](#status-codes)
 - [Rate Limiting](#rate-limiting)  
 
@@ -32,21 +33,21 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - URL: /users/
 - Method: POST
 - Body: username, email, password
-- Description: Register a new user.
+- Description: Create a new user.
   
 ### Authentication Token
 #### Obtain Token
 - URL: /tokens/
 - Method: POST
 - Body: username, password
-- Description: Obtain an authentication token.
+- Description: Returns an authentication token.
 
 ### Assistant Management
 #### List Assistants
 - URL: /assistants/
 - Method: GET
 - Auth Required: Yes
-- Description: Retrieve a list of all assistants.
+- Description: Returns a list of all assistants.
 
 #### Create Assistant
 - URL: /assistants/
@@ -59,7 +60,7 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - URL: /assistants/<int:pk>/
 - Method: GET
 - Auth Required: Yes
-- Description: Retrieve the data of a specific assistants.
+- Description: Returns the data of a specific assistants.
 
 #### Update Assistant
 - URL: /assistants/<int:pk>/
@@ -69,12 +70,19 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Description: Update an existing assistant.
 
 ### Chat
-#### Create Chat Message
+#### Create Chat
 - URL: /chat/
 - Method: POST
 - Auth Required: Yes
+- Body: assistant_id
+- Description: Create a chat instance. Returns the chat ID used for the ```/chat/<int:pk>/``` endpoint
+
+#### Send and Receive Messages
+URL: /chat/<int:pk>/
+- Method: PUT
+- Auth Required: Yes
 - Body: assistant_name, input
-- Description: Send a message to an assistant and receive a response. 
+- Description: Send a message to an assistant and returns a response.
 
 ### Status Codes
 #### The API uses the following status codes:
