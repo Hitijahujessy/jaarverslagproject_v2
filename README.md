@@ -1,7 +1,7 @@
 <div align="center">
     
-# jaarverslagproject_v2 API Documentation
-Welcome to the MyProject API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
+# AIConvoKit API Documentation
+Welcome to the AIConvoKit API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
 
 
 [![Lang](https://skillicons.dev/icons?i=python)](https://skillicons.dev) [![Lang](https://skillicons.dev/icons?i=django)](https://skillicons.dev)
@@ -89,7 +89,7 @@ This API uses token-based authentication. To obtain a token, send a POST request
 URL: /chat/<int:pk>/
 - Method: PUT
 - Auth Required: Yes
-- Body: assistant_name, input
+- Body: assistant_id, input
 - Description: Send a message to an assistant and returns a response.
 
 ### Status Codes
