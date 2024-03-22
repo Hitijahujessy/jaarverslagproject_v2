@@ -199,7 +199,7 @@ class ChatSerializer(serializers.ModelSerializer):
         output = send_message_to_assistant(assistant.openai_id, instance.thread_id, validated_data["input"])
 
         # Create and save the new Chat instance with both input and obtained output
-        chat = Chat(assistant=assistant, thread_id=instance.thread_id, **validated_data, output=output)
+        chat = Chat(assistant=assistant, **validated_data, output=output)
         chat.save()
         return chat
     
