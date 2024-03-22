@@ -166,11 +166,6 @@ def send_message_to_assistant(openai_id, thread_id, msg):
     # Retrieve assistant
     assistant = client.beta.assistants.retrieve(openai_id)
 
-    # Create a thread if thread_id is not provided
-    # if not thread_id:
-    #     thread = client.beta.threads.create()
-    #     print(f"created thread with id {thread.id}")
-    # else:
     thread = client.beta.threads.retrieve(thread_id)
     print(f"retrieved thread with id {thread.id}")
 
