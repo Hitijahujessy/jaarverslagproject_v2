@@ -10,8 +10,8 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
 
 ## Table of Contents
 - [What is AIConvoKit?](#what-is-aiconvokit)
-      - [How does it work?](#how-does-it-work)
-      - [Why AIConvoKit?]](#why-aiconvokit)
+    - [How does it work?](#how-does-it-work)
+    - [Why AIConvoKit?](#why-aiconvokit)
 - [Base URL](base-url)
 - [Authentication](#authentication)
 - [Endpoints](#endpoints)
@@ -56,6 +56,9 @@ the best out of the technology. Even if they do, there are lots of people that a
 All URLs referenced in the documentation have the following base URL:
 ```https://aiconvokit-api-63d82f4cbf77.herokuapp.com/api/v1/```
 
+# IMPORTANT
+Make sure to add the '/' to each endpoint! Otherwise it won't work. Example: use `/users/` instead of `/users`
+
 ## Authentication
 This API uses token-based authentication. To obtain a token, send a POST request to the /tokens/ endpoint with your username and password. Include the token in the Authorization header as Token <your_token> for subsequent requests that require authentication.
 
@@ -93,14 +96,14 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Returns: ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 #### View assistant
-- URL: /assistants/<int:pk>/
+- URL: /assistants/assistant id/
 - Method: GET
 - Auth Required: Yes
 - Description: Retrieve all information of an assistant.
 - Returns: ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 #### Update Assistant
-- URL: /assistants/<int:pk>/
+- URL: /assistants/assistant id/
 - Method: PUT
 - Auth Required: Yes
 - Body: name, new_name (optional), company_name, instructions, files (optional)
@@ -117,7 +120,7 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Returns: ID, absolute_url, thread_id
 
 #### Send and Receive Messages
-URL: /chat/<chat id>/
+URL: /chat/chat id/
 - Method: PUT
 - Auth Required: Yes
 - Body: assistant_id, input
