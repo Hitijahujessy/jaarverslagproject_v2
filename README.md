@@ -1,6 +1,6 @@
 <div align="center">
     
-# AIConvoKit API Documentation
+# Floes API Documentation
 Welcome to the AIConvoKit API! This API allows you to interact with our assistant management system, including user management, and chat functionalities. Below, you'll find detailed information on how to authenticate and use each endpoint.
 
 
@@ -39,8 +39,8 @@ Moreover, AIConvoKit enhances your digital presence by offering an embeddable ch
 
 ### How does it work?
 - Create an assistant by giving it a name, a simple instruction and, optionally, a document
-- Test your assistant in our testing environment
-- Put the chat on your website
+- Test your assistant in our testing environment (coming soon...)
+- Put the chat on your website (coming soon...)
 - Done!
 
 ### Why AIConvoKit?
@@ -66,20 +66,23 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Method: POST
 - Body: username, email, password
 - Description: Create a new user.
+- Returns: ID, username and email.
   
 ### Authentication Token
 #### Obtain Token
 - URL: /tokens/
 - Method: POST
 - Body: username, password
-- Description: Returns an authentication token.
+- Description: Get an authetication token.
+- Returns: Authentication token.
 
 ### Assistant Management
 #### List Assistants
 - URL: /assistants/
 - Method: GET
 - Auth Required: Yes
-- Description: Returns a list of all assistants.
+- Description: Retrieve a list of all assistants in the database.
+- Returns: List of all assistants and their ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 #### Create Assistant
 - URL: /assistants/
@@ -87,12 +90,14 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Auth Required: Yes
 - Body: name, company_name, instructions, files (optional)
 - Description: Create a new assistant.
+- Returns: ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 #### View assistant
 - URL: /assistants/<int:pk>/
 - Method: GET
 - Auth Required: Yes
-- Description: Returns the data of a specific assistants.
+- Description: Retrieve all information of an assistant.
+- Returns: ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 #### Update Assistant
 - URL: /assistants/<int:pk>/
@@ -100,6 +105,7 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Auth Required: Yes
 - Body: name, new_name (optional), company_name, instructions, files (optional)
 - Description: Update an existing assistant.
+- Returns: ID, openai_id, absolute URL, name, company_name, instructions, created_at, updated_at, query_count (placeholder) and file path.
 
 ### Chat
 #### Create Chat
@@ -107,14 +113,16 @@ This API uses token-based authentication. To obtain a token, send a POST request
 - Method: POST
 - Auth Required: Yes
 - Body: assistant_id
-- Description: Create a chat instance. Returns the chat ID used for the ```/chat/<int:pk>/``` endpoint
+- Description: Create a chat instance.
+- Returns: ID, absolute_url, thread_id
 
 #### Send and Receive Messages
-URL: /chat/<int:pk>/
+URL: /chat/<chat id>/
 - Method: PUT
 - Auth Required: Yes
 - Body: assistant_id, input
-- Description: Send a message to an assistant and returns a response.
+- Description: Send and receive messages to and from an assistant.
+- Returns: ID, absolute_url, thread_id, input, output
 
 ### Status Codes
 #### The API uses the following status codes:
