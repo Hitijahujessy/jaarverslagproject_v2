@@ -8,9 +8,10 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
 
 </div>
 
-
 ## Table of Contents
 - [What is AIConvoKit?](#what-is-aiconvokit)
+      - [How does it work?](#how-does-it-work)
+      - [Why AIConvoKit?]](#why-aiconvokit)
 - [Base URL](base-url)
 - [Authentication](#authentication)
 - [Endpoints](#endpoints)
@@ -30,10 +31,29 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
 - [Rate Limiting](#rate-limiting)
 
 ## What is AIConvoKit?
+When you need to find information in an important document, it's likely that you'll be having a hard time with finding the correct information. That's no surprise: a lot of these
+documents contain a lot of in-depth information so it might be like you're searching for a needle in a haystack. This is where AIConvoKit comes in!
+
+Our goal is to not only simplify the creation of chatbot assistants, but to push the boundaries of how useful a chatbot can be. Using AIConvoKit, it's as simple as giving the assistant a name, a simple instruction, and a document. AIConvoKit will do the rest. From annual reports to contracts, finding the right information will be a breeze. We will also provide an embeddable chat for you to put on your website.
+
+### How does it work?
+- Create an assistant by giving it a name, a simple instruction and, optionally, a document
+- Test your assistant in our testing environment
+- Put the chat on your website
+- Done!
+
+### Why AIConvoKit?
+You might be wondering, why use AIConvokit if I can just upload my file to ChatGPT-4 and ask my questions there? There are two main reasons to use AIConvoKit instead.
+
+The first reason is consistensy. The assistants are set up with a specific goal and will always have access to uploaded files. On ChatGPT, you need to reupload your files
+every time you start a new conversation.
+
+The second reason is accesibility. Not everyone knows how to use models like ChatGPT. There are still people that don't know it's capabilities, and more importantly, how to get
+the best out of the technology. Even if they do, there are lots of people that are willing to pay for ChatGPT-4. AIConvoKit allows everyone to get the right information, without the need of subscriptions and difficult prompting. Not only that, but since AIConvoKit provides an embeddable chat, hardly any web- or development skills are needed to set up a chat on your website. 
 
 ## Base URL
-All URLs referenced in the documentation have the following base:
-```http://<your_domain>/api/v1/```
+All URLs referenced in the documentation have the following base URL:
+```https://aiconvokit-api-63d82f4cbf77.herokuapp.com/api/v1/```
 
 ## Authentication
 This API uses token-based authentication. To obtain a token, send a POST request to the /tokens/ endpoint with your username and password. Include the token in the Authorization header as Token <your_token> for subsequent requests that require authentication.
