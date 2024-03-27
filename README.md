@@ -31,10 +31,11 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
 - [Rate Limiting](#rate-limiting)
 
 ## What is AIConvoKit?
-When you need to find information in an important document, it's likely that you'll be having a hard time with finding the correct information. That's no surprise: a lot of these
-documents contain a lot of in-depth information so it might be like you're searching for a needle in a haystack. This is where AIConvoKit comes in!
+In today's digital age, sifting through extensive documents for specific information can feel like searching for a needle in a haystack. The sheer volume of in-depth material often makes this task daunting and time-consuming. Enter AIConvoKit, your innovative solution designed to revolutionize the way we interact with and extract information from documents.
 
-Our goal is to not only simplify the creation of chatbot assistants, but to push the boundaries of how useful a chatbot can be. Using AIConvoKit, it's as simple as giving the assistant a name, a simple instruction, and a document. AIConvoKit will do the rest. From annual reports to contracts, finding the right information will be a breeze. We will also provide an embeddable chat for you to put on your website.
+AIConvoKit aims to radically simplify the creation of chatbot assistants while expanding their capabilities to unprecedented levels. With AIConvoKit, setting up your assistant is as easy as naming it, providing a simple directive, and uploading the document. Our cutting-edge technology takes care of the rest, making the retrieval of information from complex documents, such as annual reports and contracts, effortlessly efficient.
+
+Moreover, AIConvoKit enhances your digital presence by offering an embeddable chat feature for your website. This allows your clients or team members to interact directly with the chatbot, obtaining the information they need in real-time. Transform the way you manage and access information with AIConvoKit, where convenience meets innovation..
 
 ### How does it work?
 - Create an assistant by giving it a name, a simple instruction and, optionally, a document
