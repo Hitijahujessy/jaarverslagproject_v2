@@ -10,6 +10,7 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
 
 
 ## Table of Contents
+- [What is AIConvoKit?](#what-is-aiconvokit)
 - [Base URL](base-url)
 - [Authentication](#authentication)
 - [Endpoints](#endpoints)
@@ -27,6 +28,8 @@ Welcome to the AIConvoKit API! This API allows you to interact with our assistan
       - [Send and Receive Messages](#send-and-receive-messages)
 - [Status Codes](#status-codes)
 - [Rate Limiting](#rate-limiting)
+
+## What is AIConvoKit?
 
 ## Base URL
 All URLs referenced in the documentation have the following base:
